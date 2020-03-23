@@ -1,0 +1,116 @@
+using System;
+using System.Linq;
+using System.Text;
+ 
+namespace ConsoleApp1
+{
+    internal class Program
+    {
+        public static void Main()
+        {
+            Console.WriteLine($"Сиденко Полина");
+            Console.WriteLine($"Введите n=");
+            int n = int.Parse(Console.ReadLine());
+            Console.WriteLine($"Введите m=");
+            int m = int.Parse(Console.ReadLine());
+            int p= (n+m)/2;
+            int k = p;
+            Indexator indexator = new Indexator(n,m);
+            Console.WriteLine($"Текущий массив nхm:\n{indexator}");
+            Console.WriteLine($"Средние арефметическое от количества букв: {p}");
+            Console.WriteLine($"Зпишем наш строчку: { indexator [k]}");
+            Console.WriteLine($"Кол-во букв в массиве: {indexator.consonantsCount}");
+            
+           
+        }
+ 
+    }
+ 
+    public class Indexator
+    {
+        // будущий двумерный массив, который заполним в конструкторе
+        private char[,] array;
+ 
+        // все согласные буквы, понадобятся при подсчёте их вхождений в массиве
+        private string consonants = "йцукенгшщзхъфывапролджэячсмитьбюё";
+ 
+        // индексатор. формирует текстовую строку из заданного ряда массива
+      
+        public string this[int ind]
+        {
+            get
+            {
+                StringBuilder s = new StringBuilder();
+                for (int i = 0; i < array.GetLength(1); i++)
+                {
+                    s.Append(array[ind, i]);
+                }
+                return s.ToString();
+            }
+        }
+    
+        
+  
+        // свойство только для чтения, которое пробегает по всему массиву и считает кол-во согласных букв.
+        // эти расчёты можно было бы сделать единожды при заполнении массива в конструкторе, но...
+        public int consonantsCount
+        {
+            get
+            {
+                int count = 0;
+                for (int i = 0; i < array.GetLength(0); i++)
+                {
+                    for (int j = 0; j < array.GetLength(1); j++)
+                    {
+                        if (consonants.Contains(array[i, j])) count++;
+                    }
+                }
+ 
+                return count;
+            }
+        }
+      
+
+        // конструктор, принимающий размерность будущего массива,
+        // создаёт и заполняет двумерный массив случайными гласными и согласными буквами
+        public Indexator(int n, int m)
+        {
+            Random rand = new Random();
+            string vowels = "аеёиоуыэюя";
+ 
+ 
+            array = new char[n, m];
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    if (rand.Next(0, 2) == 0) array[i, j] = vowels[rand.Next(0, vowels.Length)];
+                    else array[i, j] = consonants[rand.Next(0, consonants.Length)];
+ 
+                }
+            }
+        }
+ 
+        // переопределённый метод, который поможет вывести на экран значения двумерного массива.
+        // можно было бы сделать отдельный метод для этого, но...
+        public override string ToString()
+        {
+            StringBuilder s = new StringBuilder();
+ 
+            char[] tempRow = new char[array.GetLength(1)];
+            for (int i = 0; i < array.GetLength(0); i++)
+            {
+                for (int j = 0; j < array.GetLength(1); j++)
+                {
+                    tempRow[j] = array[i, j];
+                }
+                s.Append(string.Join(", ", tempRow)).Append("\n");
+            }
+            return s.ToString();
+        }
+
+   
+ 
+    }
+ 
+}
