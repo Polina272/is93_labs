@@ -1,0 +1,145 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ConsoleApp6
+{
+    public struct RVector
+    {
+        private int ndim;
+        private double[] vector;
+
+        public RVector(int ndim)
+        {
+            this.ndim = ndim;
+            this.vector = new double[ndim];
+            for (int i = 0; i < ndim; i++)
+            {
+                vector[i] = 0.0;
+            }
+        }
+
+        public RVector(double[] vector)
+        {
+            this.ndim = vector.Length;
+            this.vector = vector;
+        }
+
+        public double this[int i]
+        {
+            get
+            {
+                if (i < 0 || i > ndim)
+                {
+                    throw new Exception("Requested vector index is out of range!");
+                }
+                return vector[i];
+            }
+            set { vector[i] = value; }
+        }
+
+        public int GetVectorSize
+        {
+            get { return ndim; }
+        }
+
+        public RVector SwapVectorEntries(int m, int n)
+        {
+            double temp = vector[m];
+            vector[m] = vector[n];
+            vector[n] = temp;
+            return new RVector(vector);
+        }
+
+        public override string ToString()
+        {
+            string str = "(";
+            for (int i = 0; i < ndim - 1; i++)
+            {
+                str += vector[i].ToString() + ", ";
+            }
+            str += vector[ndim - 1].ToString() + ")";
+            return str;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return (obj is RVector) && this.Equals((RVector)obj);
+        }
+
+        public bool Equals(RVector v)
+        {
+            return vector == v.vector;
+        }
+
+        public override int GetHashCode()
+        {
+            return vector.GetHashCode();
+        }
+
+        public static bool operator ==(RVector v3, RVector v2)
+        {
+            return v3.Equals(v2);
+        }
+
+        public static bool operator !=(RVector v3, RVector v2)
+        {
+            return !v3.Equals(v2);
+        }
+
+        public static RVector operator +(RVector v)
+        {
+            return v;
+        }
+
+        public static RVector operator +(RVector v3, RVector v2)
+        {
+            RVector v1 = new RVector(v3.ndim);
+            for (int i = 0; i < v3.ndim; i++)
+            {
+                v1[i] = v3[i] + v2[i];
+            }
+            return v1;
+        }
+
+        public static RVector operator -(RVector v)
+        {
+            double[] v1 = new double[v.ndim];
+            for (int i = 0; i < v.ndim; i++)
+            {
+                v1[i] = -v[i];
+            }
+            return new RVector(v1);
+        }
+
+        public static RVector operator -(RVector v3, RVector v2)
+        {
+            RVector v1 = new RVector(v3.ndim);
+            for (int i = 0; i < v3.ndim; i++)
+            {
+                v1[i] = v3[i] - v2[i];
+            }
+            return v1;
+        }
+
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Сиденко Полина");
+            RVector v3 = new RVector(new double[] { 5.0, 4.0});
+            RVector v2 = new RVector(new double[] { 10.0+3, 9.0 });
+
+            Console.WriteLine("\nv3 (5,4)");
+            Console.WriteLine("v2 (10,9) ");
+            
+            Console.WriteLine("В векторе v2 увеличим Х на 3 еденицы вперед");
+            Console.WriteLine("v2 + v3 = v1 ={0}", (v2+ v3));
+            Console.WriteLine("v2 - v3 = {0}", (v2 - v3));
+           
+            Console.ReadLine();
+        }
+    }
+}
