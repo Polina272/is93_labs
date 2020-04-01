@@ -1,0 +1,51 @@
+#include <iostream>
+using namespace std;
+class Vector
+{
+private:
+    double x, y;
+
+public:
+    Vector(double x = 0, double y = 0) : x(x), y(y)
+    {
+    }
+
+    friend std::ostream& operator <<(std::ostream& os, const  Vector& v);
+    friend Vector operator +(const Vector& V, double d);
+    friend Vector operator +(double d, const Vector& v);
+    friend Vector operator +(const Vector& V2, const Vector& V3); // и тут
+};
+
+std::ostream& operator <<(std::ostream& os, const  Vector& v)
+{
+    return os << "( " << v.x << ", " << v.y << " )";
+}
+
+Vector operator +(const Vector& v, double d)
+{
+    return Vector( d + v.x, d + v.y );
+}
+
+Vector operator +(double d, const Vector& v)
+{
+    return v + d;
+}
+Vector operator +(const Vector& v3, const Vector& v2)
+{
+    return Vector(v2.x + v3.x, v2.y + v3.y);
+}
+
+int main()
+{
+    setlocale(LC_ALL, "Russian");
+    cout << "Сиденко Полина" << endl;
+    Vector v2(5, 4);
+    Vector v3(10, 9);
+    cout << "v2= " << v2 << endl;
+    cout << "v3= " << v3 << endl;
+    cout << "Увеличим в векторе v2 Х на 3 еденицы" << endl;
+    cout << "v3= " << v3+3 << endl;
+    cout << "v1=v2+v3" << endl;
+    std::cout << (3 + v2)+(v3) << std::endl;
+    return 0;
+}
