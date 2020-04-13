@@ -1,0 +1,116 @@
+#include <iostream>
+#include <fstream>
+#include <cmath>
+
+using namespace std;
+
+class Point {
+
+private:
+
+    double x;
+    double y;
+
+public:
+
+    //Сеттеры
+
+    void setX(double coordx) {
+        x = coordx;
+    }
+    void setY(double coordy) {
+        y = coordy;
+    }
+
+    //Геттеры
+
+    double getX() {
+        return x;
+    }
+    double getY() {
+        return y;
+    }
+
+    void printPointInfo() { 
+        //Метод вывода информации о точке на экран 
+        cout << "Кордината x = " << getX() << endl;
+        cout << "Кордината y = " << getY()  <<endl;
+    }
+
+    Point(double coordX, double coordY) { 
+        //Инициализирующий конструктор (конструктор с параметрами)
+        setX(coordX);
+        setY(coordY);
+    }
+
+    ~Point() { //Деструктор     
+    }
+
+    friend ostream& operator<<(ostream&, const Point&); 
+    //Объявляем дружественную функцию (для перегрузки оператора вывода в консоль)
+};
+
+ostream& operator<<(ostream& out, const Point& obj) { 
+    //Функция перегрузки оператора вывода
+    out << "Кордината x вектора = " << obj.x << endl;
+    out << "Кордината y вектора = " << obj.y;
+    return out;
+}
+
+
+class Vector : public Point { 
+    //Наследуем родительский класс
+
+public:
+    double calculateVectorLength() 
+    { 
+        //Метод вычисления длины вектора
+        return sqrt(getX() * getX() + getY() * getY());
+    }
+
+    Vector(double coordX, double coordY) : Point(coordX, coordY) 
+    { 
+        //Инициализирующий конструктор
+    }
+
+    void printVectorLength() 
+    { 
+        //Метод вывода информации о длине вектора на экран
+        cout << "Векторная длина = " << calculateVectorLength() << endl;
+    }
+
+    ~Vector() 
+    { 
+        //Деструктор
+     
+    }
+};
+
+int main()
+{
+    setlocale(LC_ALL, "Russian");
+    int x1, y1;
+    cout << "Сиденко Полина ИС-93"<<endl;
+    cout << "Ввведите значение x: "<<endl;
+    cin >> x1;
+    cout << "Ввведите значение y: "<<endl;
+    cin >> y1;
+    Point* obj1 = new Point(x1, y1); //Создаем объект класса Point
+
+    cout << *obj1 <<endl;
+    //Перегружаем оператор вывода в консоль (<<), выводим координаты точки
+
+
+    delete obj1; //Будет вызван деструктор базового класса
+
+    cout << endl;
+    Vector* obj2 = new Vector(x1, y1); //Создаем объект класса Vector
+
+    cout << *obj2 << endl; //Перегружаем оператор вывода в консоль (<<), выводим координаты точки
+
+    obj2->printVectorLength();
+    delete obj2; //Будет вызван деструктор дочернего класса, а затем деструктор базового (это происходит при наследовании)
+
+    system("pause");
+    return 0;
+}
