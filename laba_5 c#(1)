@@ -1,0 +1,139 @@
+using System;
+
+namespace ConsoleApp8
+{
+	public class Point : System.IDisposable
+	{
+
+
+		private double x;
+		private double y;
+
+
+		//Сеттеры
+
+		public void setX(double coordx)
+		{
+			x = coordx;
+		}
+		public void setY(double coordy)
+		{
+			y = coordy;
+		}
+
+		//Геттеры
+
+		public double getX()
+		{
+			return x;
+		}
+		public double getY()
+		{
+			return y;
+		}
+
+		public void printPointInfo()
+		{
+			//Метод вывода информации о точке на экран 
+			Console.Write("Кордината x = ");
+			Console.Write(getX());
+			Console.Write("\n");
+			Console.Write("Кордината y = ");
+			Console.Write(getY());
+			Console.Write("\n");
+		}
+
+		public Point(double coordX, double coordY)
+		{
+			//Инициализирующий конструктор (конструктор с параметрами)
+			setX(coordX);
+			setY(coordY);
+		}
+
+		public void Dispose()
+		{ //Деструктор
+		}
+
+
+		//Объявляем дружественную функцию (для перегрузки оператора вывода в консоль)
+	}
+
+
+	public class Vector : Point
+	{
+		//Наследуем родительский класс
+
+		public double calculateVectorLength()
+		{
+			//Метод вычисления длины вектора
+			return Math.Sqrt(getX() * getX() + getY() * getY());
+		}
+
+		public Vector(double coordX, double coordY) : base(coordX, coordY)
+		{
+			//Инициализирующий конструктор
+		}
+
+		public void printVectorLength()
+		{
+			//Метод вывода информации о длине вектора на экран
+			Console.Write("Векторная длина = ");
+			Console.Write(calculateVectorLength());
+			Console.Write("\n");
+		}
+
+		public new void Dispose()
+		{
+			//Деструктор
+
+			base.Dispose();
+		}
+	}
+
+	public static class GlobalMembers
+	{
+		static int Main()
+		{
+			
+			int x1;
+			int y1;
+			Console.Write("Сиденко Полина ИС-93");
+			Console.Write("\n");
+			Console.Write("Ввведите значение x: ");
+			Console.Write("\n");
+			x1 = int.Parse(ConsoleInput.ReadToWhiteSpace(true));
+			Console.Write("Ввведите значение y: ");
+			Console.Write("\n");
+			y1 = int.Parse(ConsoleInput.ReadToWhiteSpace(true));
+			Point obj1 = new Point(x1, y1); //Создаем объект класса Point
+			Console.Write("значение x= ");
+			Console.Write(x1);
+			Console.Write("\n");
+			Console.Write("значение y= ");
+			Console.Write(y1);
+			Console.Write("\n");
+			Console.Write(obj1);
+			Console.Write("\n");
+
+
+			if (obj1 != null)
+			{
+				obj1.Dispose();
+			} //Будет вызван деструктор базового класса
+
+			Console.Write("\n");
+			Vector obj2 = new Vector(x1, y1); //Создаем объект класса Vector
+
+			Console.Write(obj2);
+			Console.Write("\n");
+
+			obj2.printVectorLength();
+			if (obj2 != null)
+			{
+				obj2.Dispose();
+			} //Будет вызван деструктор дочернего класса, а затем деструктор базового (это происходит при наследовании)
+			return 0;
+		}
+	}
+
+}
