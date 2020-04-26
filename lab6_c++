@@ -1,0 +1,90 @@
+#include <iostream>
+#include <cmath>
+#include <exception>
+using namespace std;
+
+class Expression // создаем класс ексепшин 
+{
+private:
+    float a, c, d, b;
+public:
+    Expression()// прописываем, что 
+    {     
+        b = 0;  
+    }
+    Expression(float a, float b, float c, float d)
+    {
+        this->c = c;
+        this->b = b;
+        this->d = d;
+        this->a = a;
+    }
+
+    float getResult()
+    {
+        if (b == 0)
+            throw invalid_argument("Возникло исключение!d=0\n");
+        if ((sqrt(24 + d - c)) <= 0)
+            throw invalid_argument("Возникло исключение!(sqrt(24+d-c))0\n");
+        return ((1 + a - (b / 2)) / (sqrt(24 + d - c) + (a / b)));
+    }
+
+    Expression operator+(const Expression& other)
+    {
+        return Expression(this->a + other.a, this->c + other.c, this->d + other.d, this->b + other.b);
+    }
+
+    Expression operator-(const Expression& other)
+    {
+        return Expression(this->a - other.a, this->c - other.c, this->d - other.d,this->b - other.b);
+    }
+
+    Expression operator*(const Expression& other)
+    {
+        return Expression(this->a * other.a, this->c * other.c, this->d * other.d, this->b * other.b);
+    }
+
+    Expression operator/(const Expression& other)
+    {
+        if (other.a == 0 || other.c == 0 || other.d == 0 || other.b == 0)
+            throw exception("Division by zero\n");
+        else
+            return Expression(this->a / other.a, this->c / other.c, this->d / other.d, this->b / other.b);
+    }
+};
+
+int main()
+{
+    setlocale(LC_ALL, "Russian");
+    const int size = 6;
+    int i = 0;
+    Expression arr[size];
+    arr[0] = Expression(1, 10, 3, 4);
+    arr[1] = Expression(24, 4, 10, 5);
+    arr[2] = arr[0] - arr[1];
+    arr[3] = arr[1] + arr[2];
+    
+    try
+    {
+        arr[4] = arr[2] / arr[3];
+    }
+    catch (const exception & ex)
+    {
+        cout << ex.what();
+    }
+    while (i < size)
+    {
+        try
+        {
+            for (i; i < size; i++)
+                cout << "arr[" << i << "] = " << arr[i].getResult() << endl;
+        }
+        catch (const invalid_argument & ex)
+        {
+            cout << ex.what();
+        }
+        i++;
+    }
+
+    return 0;
+}
