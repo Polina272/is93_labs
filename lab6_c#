@@ -1,0 +1,113 @@
+using System;
+
+namespace ConsoleApp10
+{
+	public class Expression // создаем класс ексепшин
+	{
+		private float a;
+		private float c;
+		private float d;
+		private float b;
+		private float k; 
+		public Expression() // прописываем, что
+		{
+			b = 0;
+		}
+		public Expression(float a, float c, float d, float b )
+		{
+			this.c = c;
+			this.b = b;
+			this.d = d;
+			this.a = a;
+			 
+		}
+		
+
+		public float getResult()
+		{
+	
+			if (b == 0)
+			{
+				throw new System.ArgumentException("d=0\n");
+			}
+			if ((Math.Sqrt(24 + d - c)) <= 0)
+			{
+				throw new System.ArgumentException("(sqrt(24+d-c))0\n");
+			}
+			return 0;
+		}
+
+
+		public static Expression operator +(Expression ImpliedObject, Expression other)
+		{
+			return new Expression(ImpliedObject.a + other.a, ImpliedObject.c + other.c, ImpliedObject.d + other.d, ImpliedObject.b + other.b);
+		}
+
+		public static Expression operator -(Expression ImpliedObject, Expression other)
+		{
+			return new Expression(ImpliedObject.a - other.a, ImpliedObject.c - other.c, ImpliedObject.d - other.d, ImpliedObject.b - other.b);
+		}
+
+		public static Expression operator *(Expression ImpliedObject, Expression other)
+		{
+			return new Expression(ImpliedObject.a * other.a, ImpliedObject.c * other.c, ImpliedObject.d * other.d, ImpliedObject.b * other.b);
+		}
+
+		public static Expression operator /(Expression ImpliedObject, Expression other)
+		{
+			if (other.a == 0F || other.c == 0F || other.d == 0F || other.b == 0F)
+			{
+				throw new System.Exception("Division by zero\n");
+			}
+			else
+			{
+				return new Expression(ImpliedObject.a / other.a, ImpliedObject.c / other.c, ImpliedObject.d / other.d, ImpliedObject.b / other.b);
+			}
+		}
+	}
+
+	public static class GlobalMembers
+	{
+		static int Main()
+		{
+			const int size = 6;
+			int i = 0;
+			Expression[] arr= new Expression[6];
+			arr[0] = new Expression(1, 3, 2, 32);
+			arr[1] = new Expression(24, 1, 4, 2);
+			arr[2] = arr[0] - arr[1];
+			arr[3] = arr[1] + arr[2];
+			arr[4] = arr[2] * arr[3];
+			try
+			{
+				arr[5] = arr[3] / arr[2];
+			}
+			catch (System.Exception ex)
+			{
+				Console.Write(ex.Message);
+			}
+			while (i < size)
+			{
+				try
+				{
+					for (i = 0; i < size; i++)
+					{
+						Console.Write("arr[");
+						Console.Write(i);
+						Console.Write("] = ");
+						Console.Write(arr[i].getResult());
+						Console.Write("\n");
+					}
+				}
+				catch 
+				{
+					Console.Write("Возникло исключение!");
+				}
+				i++;
+			}
+
+			return 0;
+		}
+	}
+
+}
