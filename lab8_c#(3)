@@ -1,0 +1,57 @@
+using System;
+
+namespace ConsoleApp15
+{
+    class OverFlowTest
+    {
+        // Устанавливаем maxIntValue максимальное значение для целых чисел.
+        static int maxIntValue = 23;
+
+        // Используя проверенное выражение.
+        static int CheckedMethod()
+        {
+            int z = 0;
+            try
+            {
+                // строка вызывает исключение, потому что оно проверено.
+                z = checked(maxIntValue + 10);
+            }
+            catch (System.OverflowException e)
+            {
+                //  строка отображает информацию об ошибке.
+                Console.WriteLine("CHECKED and CAUGHT:  " + e.ToString());
+            }
+            // Значение z по-прежнему равно 0.
+            return z;
+        }
+
+        // Использование непроверенного выражения.
+        static int UncheckedMethod()
+        {
+            int z = 0;
+            try
+            {
+                // The following calculation is unchecked and will not
+                // raise an exception.
+                z = maxIntValue + 10;
+            }
+            catch (System.OverflowException e)
+            {
+                // Следующая строка не будет выполнена.
+                Console.WriteLine("UNCHECKED and CAUGHT:  " + e.ToString());
+            }
+            // Из-за необнаруженного переполнения сумма 23 + 10 равна
+            // возвращается как 33
+            return z;
+        }
+      
+
+    static void Main()
+        {
+            Console.WriteLine("\nCHECKED output value is: {0}",
+                              CheckedMethod());
+            Console.WriteLine("UNCHECKED output value is:-{0}",
+                              UncheckedMethod());
+        }
+    }
+}
