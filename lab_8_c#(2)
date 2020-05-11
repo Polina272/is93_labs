@@ -1,0 +1,79 @@
+using System;
+
+namespace ConsoleApp12
+{
+    // Класс Integer - ссылочный тип
+    class Integer
+    {
+        public int value; // целочисленное значение
+    }
+
+    class Program
+    {
+        // Статическая функция GetArray() генерирует (формирует) массив случайных чисел,
+        // масив передается как ref-параметр, можно изменять саму ссылку A
+        static void GetArray(ref Integer[] A)
+        {
+            int[,] M = { {1, 2, 3 },
+                        {4, 5, 6} };
+            //  Возврат из функции
+            return;
+        }
+
+        // Статическая функция, которая находит сумму элементов массива,
+        // массив передается по ссылке (с модификатором ref)
+        static int SumIntegers(ref Integer[] A)
+        {
+            int sum = 0;
+            for (int i = 0; i < A.Length; i++)
+            {
+                sum += A[i].value;
+            }
+            return sum;
+        }
+
+        static void Main(string[] args)
+        {
+            // Передача ref-массива экземпляров класса в метод
+
+            // Объявить массив типа Integer
+            const int MAX_ITEMS = 6; // максимально-допустимое количество элементов в массиве
+            Integer[] Array;
+
+            // Выделить память для MAX_ITEMS элементов, 
+            Array = new Integer[MAX_ITEMS];
+
+            //  Выделить память для каждого элемента типа Integer
+            for (int i = 0; i < Array.Length; i++)
+                Array[i] = new Integer();
+
+            // Заполнить массив Array фиксированными значениями от 1 до Array.Length
+            for (int i = 0; i < Array.Length; i++)
+            {
+                Array[i].value = i + 1;
+            }
+
+            // Вывести массив на экран в строку
+            Console.WriteLine("Array:");
+            for (int i = 0; i < Array.Length; i++)
+            {
+                Console.Write($"{Array[i].value}\t");
+            }
+
+            //  Заполнить массив Array 
+            // с помощью вызова функции GetArray()
+            GetArray(ref Array); // функция статическая, изменяет массив изнутри
+
+            // Вывести измененный массив на экран
+            Console.WriteLine("\nArray:");
+            for (int i = 0; i < Array.Length; i++)
+            {
+                Console.Write($"{Array[i].value}\t");
+            }
+
+            // Вычислить сумму элементов измененного массива и вывести ее на экран
+            int summ = Program.SumIntegers(ref Array);
+            Console.WriteLine($"\nsumm = {summ}");
+        }
+    }
+}
