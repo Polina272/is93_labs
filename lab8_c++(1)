@@ -1,0 +1,26 @@
+#include <iostream>
+#include <math.h>
+using namespace std;
+// функция вычисления суммы элементов двумерного массива
+int Sum(int A[][3])
+{
+    int s = 0;
+    int i, j;
+
+    for (i = 0; i < 2; i++)
+        for (j = 0; j < 3; j++)
+            s = s + A[i][j];
+    return s;
+}
+
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    int M[2][3] = { {1, 2, 3 },
+                     {4, 5, 6} };
+    int (*operation)(int M[2][3]);   // переменная указатель на функцию
+    operation = Sum;
+    cout << " сумма = "<< (*operation)(M) << endl;
+    return 0;
+}
