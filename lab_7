@@ -1,0 +1,230 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<iostream>
+#include<Windows.h>
+#include<conio.h>
+#include<math.h>
+
+struct  Spis
+{
+    int info;
+    Spis* Prev, * Next;
+};
+
+Spis* begin, * end, * t;
+int menu();
+void View(Spis* begin);                  //просмотр списка
+Spis* Create(Spis** begin, Spis** end);    //создание списка
+Spis* Add(Spis** begin, Spis** end);       //добавление элемента
+void Del(Spis** begin);                  //удаление списка
+Spis* DelMaxSAr(Spis* begin);            //Удалить из списка все элементы, большие среднего арифметического
+void DelSAr(Spis* begin);
+
+int main()
+{
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
+    int menu1;
+
+    do
+    {
+        menu1 = menu();
+        switch (menu1)
+        {
+        case 1:         //1 - создать список из случайных целых чисел
+        {
+            begin = Create(&begin, &end);
+            break;
+        }
+
+        case 2:         //2 - просмотр списка
+        {
+            View(begin);
+            t = begin;
+            break;
+        }
+        case 3:         //3 - добавление элементов списка
+        {
+            begin = Add(&begin, &end);
+            break;
+        }
+        case 4:         //4 -Удалить из списка все элементы, большие среднего арифметического
+        {
+            DelMaxSAr(begin);
+            begin = t;
+            break;
+        }
+       
+        case 5:
+        {
+            Del(&begin);
+            if (begin == NULL)
+                puts("Проверено! ");
+            _getch();
+        }
+        case 6:         //4 -Удалить из списка все элементы, большие среднего арифметического
+        {
+            DelSAr(begin);
+        
+            break;
+        }
+        }
+    } while (menu1 != 7);
+}
+
+int menu()// меню по созданию, просмотру, добавлению и решению поставленной задачи
+{
+    int enter;
+    printf("\t\tМЕНЮ ПРОГРАММЫ\n");
+    printf("\t1 - создать список из случайных целых чисел в диапазоне от 1 до 10\n");
+    printf("\t2 - просмотр списка\n");
+    printf("\t3 - добавление элементов списка\n");
+    printf("\t4 - yдалить из списка все элементы, большие среднего арифметического\n");
+    printf("\t5 - выход\n");
+    printf("___________________________________________________________________________\n");
+    printf("Введите пункт меню: ");
+    scanf("%d", &enter);
+    return enter;
+}
+
+Spis* Create(Spis** begin, Spis** end)
+{
+    *begin = NULL;
+    Spis* t = (Spis*)malloc(sizeof(Spis));
+    t->info = rand() % 10;
+    t->Prev = NULL;
+    t->Next = NULL;
+    *begin = *end = t;
+    for (int i = 0; i < 10; i++)
+    {
+        t = (Spis*)malloc(sizeof(Spis));
+        t->info = rand() % 10;
+        t->Prev = NULL;
+        t->Next = *begin;
+        (*begin)->Prev = t;
+        *begin = t;
+    }
+    printf("\n\tСписок создан\n\n");
+    return t;
+}
+
+void View(Spis* begin)
+{
+    t = begin;
+    while (t != NULL)
+    {
+        printf("%d  ", t->info);
+        t = t->Next;
+    }
+    printf("\n ");
+    t = begin;
+
+}
+
+Spis* Add(Spis** begin, Spis** end)
+{
+    t = (Spis*)malloc(sizeof(Spis));
+    printf("\n\n Введите значение для добавления: ");
+    scanf("%d", &t->info);
+    t->Prev = NULL;
+    t->Next = *begin;
+    (*begin)->Prev = t;
+    *begin = t;
+    return t;
+}
+
+void Del(Spis** begin)
+{
+    Spis* t = *begin;
+    while (*begin != NULL)
+    {
+        t = *begin;
+        *begin = (*begin)->Next;
+        free(t);
+    }
+    puts("Память очищена");
+}
+
+void DelSAr(Spis* begin)     //подсчет
+{
+    Spis* key = NULL;
+    int q_namber = 0, summ = 0;  //количество элементов  
+    double s_ar;    //3.13
+    t = begin;
+    while (t != NULL)
+    {
+        q_namber++;
+        summ += t->info;
+        t = t->Next;
+    }
+    int q = 0;
+    
+    s_ar = 3,14;
+    t = begin;
+    
+    while (t != NULL)
+    {
+     
+        if (t->info > 3)
+            key = t;
+            q++;
+
+    }
+    printf("\n количество %0.2lf\n", q);
+}
+
+Spis* DelMaxSAr(Spis* begin)     //Удалить из списка все элементы, большие среднего арифметического
+{
+    Spis* key = NULL;
+    int q_namber = 0, summ = 0;  //количество элементов  
+    double s_ar;    //среднее арифметическое
+    t = begin;
+    while (t != NULL)
+    {
+        q_namber++;
+        summ += t->info;
+        t = t->Next;
+    }
+    s_ar = (double)summ / q_namber;
+    printf("\nСреднее арифметическое: %0.2lf\n", s_ar);
+    t = begin;
+    while (t != NULL)
+    {
+        //иду по списку, пока не найду тот эл-т, который больше s_ar;  
+        //среднее арифметическое
+
+        if (t->info > s_ar)
+            key = t;
+
+        if (key != NULL)               //cамо удаление из списка
+        {
+            if (key == begin)          //если элемент расположен в начале
+            {
+                begin = begin->Next;
+                begin->Prev = NULL;
+                t = begin;
+            }
+            else
+            {
+                if (key == end)    //если он в конце   
+                {
+                    t = key->Prev;
+                    end = end->Prev;
+                    end->Next = NULL;
+                }
+                else            //или в "теле"
+                {
+                    t = key->Next;
+                    (key->Prev)->Next = key->Next;
+                    (key->Next)->Prev = key->Prev;
+                }
+            }
+            free(key);              //затираю память
+            key = NULL;
+        }
+        else
+            t = t->Next;
+    }
+    View(begin);
+    t = begin;
+    return t;
+}
