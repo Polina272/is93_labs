@@ -1,0 +1,254 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+
+class room 
+{
+public:
+    int category; // категория номера
+    int booked = -1; // бронь номера на определенный день
+    int booked_free = -1; // дата выезда клиента
+};
+
+
+class business 
+{
+public:
+    int money;
+    int get_money() 
+    {
+        return 0;
+    }
+};
+
+
+class hotel : public business 
+{
+public:
+    int money = 0; // количество заработаных денег
+    int day = 1;  // сколько дней прошло с открытия отеля
+    room rooms[1000]; // массив в которым хранится информациях о комнатах, количество комнат в отеле ограничено 1000
+    int rooms_a = 0; // количество комнат в отеле
+    int rooms_not_free[1000]; // занятые комнаты
+    int not_free = 0; // количество занятых комнат
+    int categorys[15]; // категорий может быть не больше 15
+    int d_categorys = 0; // количество категорий комнат
+
+    void create(int r, int d, int cat_fee[15], int categorys_amount[15]) 
+    {
+        /*
+         создание комнат в количестве r
+         количество категорий комнат d
+         стоимость комнат массив cat_fee
+         количество комнат в каждой категории categorys_amount
+         */
+        rooms_a = r;
+        int k = 0;
+        *categorys = *cat_fee;
+        d_categorys = d;
+        for (int c = 0; c < d_categorys; c++) 
+        {  // цикл создания комнат
+            for (int i = 0; i < categorys_amount[c]; i++) 
+            {
+                rooms[i + k] = room();
+                rooms[i + k].category = c;
+            }
+            k += categorys_amount[c];
+        }
+
+        for (int i = 0; i < 1000; i++) { // отмечаем в массиве что занятых комнат нет
+            rooms_not_free[i] = -1;
+        }
+    }
+
+    bool сheck_not_free(int r)
+    {
+        // проверка является ли комната r свободной или в нее заехали
+        for (int i = 0; i < not_free; i++) 
+        {
+            if (r == rooms_not_free[i]) 
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    int find_free(int c, int p, int date) 
+    {
+        // поиск свободной комнаты в категории c
+        for (int i = 0; i < rooms_a; i++) 
+        {
+            if (rooms[i].category == c && сheck_not_free(i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    string to_book(int c, int p, int date) 
+    {
+        /*
+        функция которая позовляет забронировать комнату
+         возвращает результат планировки
+        c - категория
+        p - период в днях
+        date - дата въезда с момента открытия отеля */
+        if (date < day) 
+        {
+            return "нельзя заброкировать номер на дату которая уже прошла";
+        }
+        int f = find_free(c, p, date);
+        if (f == -1) {
+            return "нет свободных комнат в данной категории";
+        }
+        rooms[f].booked = date;
+        rooms[f].booked_free = date + p;
+        money += p * categorys[c - 1];
+        rooms_not_free[not_free] = f;
+        not_free++;
+        return "комната " + to_string(f) + " занята";
+    }
+
+    void moderate(int indx) 
+    {
+        // функция которая в случае особождение комнаты с индексом indx cдвигает массив влево
+        for (int i = indx; i < not_free - 1; i++) 
+        {
+            rooms_not_free[i] = rooms_not_free[i + 1];
+        }
+    }
+
+    void next_day() 
+    {
+        // функция которая позволяет промотать 1 день с течением дней комнаты освобождаются
+        day++;
+
+        int i = 0;
+        while (i < not_free) 
+        {
+            // цикл while используется по причине того что если комната особождается она удаляется из массива
+            // на ее место становится следующая комната
+            if (rooms[rooms_not_free[i]].booked_free == day) {
+                rooms[rooms_not_free[i]].booked_free = -1;
+                rooms[rooms_not_free[i]].booked = -1;
+                moderate(i);
+                not_free--;
+            }
+            else 
+            {
+                i++;
+            }
+        }
+    }
+
+    int get_money() 
+    {
+        return money;
+    }
+
+    void set_day(int d) 
+    {
+        if (d < 0) 
+        {
+            throw "День должен быть позитивным числом";
+        }
+        day = d;
+    }
+};
+
+
+
+int generate_random_day() 
+{
+    return rand() % 1000;
+}
+
+
+class random_day : public business
+{
+public:
+    int generate_random_day()
+    {
+        return rand() % 1000;
+    }
+};
+
+int main() 
+{
+    setlocale(LC_ALL, "Russian");
+    hotel h = hotel(); //  создание отеля
+    int n;
+    int m;
+    int c_f[15];
+    int c_a[15];
+    cout << "введите количество комнат в отеле: ";
+    scanf("%d", &n);
+    cout << "введите количество категорий комнат в отеле: ";
+    scanf("%d", &m);
+    for (int i = 0; i < m; i++) 
+    {
+        cout << "введите стоимость комнаты категории" + to_string(i + 1) + ": ";
+        scanf("%d", &c_f[i]);
+        cout << "введите количество комнат категории" + to_string(i + 1) + ": ";
+        scanf("%d", &c_a[i]);
+    }
+    
+    h.create(n, m, c_f, c_a);
+
+    int state = 0;
+
+    int (*fcnPtr)() = generate_random_day;
+
+    while (true) 
+{
+        cout << endl << "добавить бронь: 1" << endl
+            << "заехать в комнату сегодня: 2" << endl
+            << "следующй день: 3" << endl
+            << "закрыть отель: 4 " << endl
+            << "узнать сколько денег у отеля: 5" << endl;
+
+        cin >> state;
+       
+        if (state == 1) {
+            int room_c, days_l, day_enter;
+            cout << "введите категорию номера (от 1 до " + to_string(m) + "): " << endl;
+            scanf("%d", &room_c);
+            cout << "введите количество дней проживания: " << endl;
+            scanf("%d", &days_l);
+            cout << "введите день вьезда: " << endl;
+            scanf("%d", &day_enter);
+            cout << h.to_book(room_c - 1, days_l, day_enter) << endl;
+        }
+
+        if (state == 2) {
+            int room_c, days_l, day_enter;
+            cout << "введите категорию номера (от 1 до " + to_string(m) + "): " << endl;
+            scanf("%d", &room_c);
+            cout << "введите количество дней проживания: " << endl;
+            scanf("%d", &days_l);
+            cout << h.to_book(room_c - 1, days_l, h.day) << endl;
+        }
+
+        if (state == 3) {
+            h.next_day();
+        }
+
+        if (state == 4) {
+            break;
+        }
+
+        if (state == 5) {
+            cout << "у отеля " << h.get_money() << "$ на счету." << endl;
+        }
+    }
+
+    h.set_day(fcnPtr());
+
+    // h.set_day(-1);  // генерация исключения лично типа в случае если мы попытаемся установить несуществующую дату
+
+    return 0;
+}
